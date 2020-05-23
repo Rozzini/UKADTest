@@ -25,11 +25,11 @@ namespace SiteMap.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<double>("AccessMS")
+                        .HasColumnType("float");
+
                     b.Property<string>("SiteMapUrlString")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Tics")
-                        .HasColumnType("int");
 
                     b.Property<int>("URLId")
                         .HasColumnType("int");

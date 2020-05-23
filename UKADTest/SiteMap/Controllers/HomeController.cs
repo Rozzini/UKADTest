@@ -10,73 +10,42 @@ using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SiteMap.Models;
+using SiteMap.Repo;
+using SiteMap.Data;
 
 namespace SiteMap.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IRepository _repository;
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IRepository repository, ILogger<HomeController> logger)
         {
             _logger = logger;
+            _repository = repository;
         }
 
         [HttpPost]
         public void GetMap(URL newURL)
         {
-            string SiteMapString = null;
-            string url;
-            string SiteMap = "Sitemap:";
-            string DotXML = ".xml";
-            url = newURL.Url + "/robots.txt";
-            WebClient client = new WebClient();
-            Stream stream = client.OpenRead(url);
-            //StreamReader reader = new StreamReader(stream);
-            //String content = reader.ReadToEnd();
-            List<string> content = new List<string>();
-            string line;
-            using (StreamReader file = new StreamReader(stream))
+            if(!_repository.Equality(newURL.Url))
             {
-                while ((line = file.ReadLine()) != null)
-                {
-                    if (line.Contains("Sitemap"))
-                    {
-                        content.Add(line);
-                    }
-                }
+                _repository.UpLoadDomainString(newURL);
             }
-           for(int i = 0; i<content.Count; i++)
+
+            string URL;
+            URL = newURL.Url + "/robots.txt";
+
+            List<string> RobotsLinks = DataAccess.GetRobotTxt(URL);
+
+
+            int i = 0;  //variable for placing break point here
+
+            List<string> DomainUrls = new List<string>();
+
+            foreach(string x in RobotsLinks)
             {
-                content[i] = content[i].Remove(0, 9);
-            }
-            for (int i = 0; i < content.Count; i++)
-            {
-                SiteMapString = content[i];
-            }
-            
-            XmlDocument doc = new XmlDocument();            
-            doc.Load(SiteMapString);
-            string[] XMLUrlStrings = doc.InnerText.Split(new string[] { newURL.Url }, StringSplitOptions.None);
-            if(XMLUrlStrings[1].Contains("xml"))
-            {
-                XmlDocument docr = new XmlDocument();
-                docr.Load(newURL.Url + XMLUrlStrings[1].ToString());
-                string[] XMLUrlStringsr = docr.InnerText.Split(new string[] { newURL.Url }, StringSplitOptions.None);
-
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(newURL.Url + XMLUrlStringsr[1]);
-
-                System.Diagnostics.Stopwatch timer = new Stopwatch();
-                timer.Start();
-
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                timer.Stop();
-
-                TimeSpan timeTaken = timer.Elapsed;
-            }
-            else
-            {
+                DataAccess.GetUrls(x, newURL.Url, DomainUrls);
             }
         }
 

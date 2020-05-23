@@ -13,7 +13,7 @@ namespace SiteMap.Models
 
         public string SiteMapUrlString { get; set; }
 
-        public int Tics { get; set; }
+        public double AccessMS { get; set; }
 
         [ForeignKey("URL")]
         public int URLId { get; set; }

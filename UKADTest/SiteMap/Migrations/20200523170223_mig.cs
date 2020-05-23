@@ -2,7 +2,7 @@
 
 namespace SiteMap.Migrations
 {
-    public partial class Mig : Migration
+    public partial class mig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -26,7 +26,7 @@ namespace SiteMap.Migrations
                     ID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SiteMapUrlString = table.Column<string>(nullable: true),
-                    Tics = table.Column<int>(nullable: false),
+                    AccessMS = table.Column<double>(nullable: false),
                     URLId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

@@ -1,11 +1,48 @@
-﻿using System;
+﻿using SiteMap.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SiteMap.Repo
 {
-    public class Repository
+    public class Repository : IRepository
     {
+        private readonly AppContext appContext;
+
+        public Repository(AppContext appDbContext)
+        {
+            this.appContext = appDbContext;
+        }
+
+        public bool Equality(string domain)
+        {
+            if (appContext.URLs.Any(o => o.Url == domain))
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        public IEnumerable<SiteMapUrl> GetDomainLinks(int dominaId)
+        {
+            return appContext.SiteMapUrls.Where(x => x.URLId == dominaId);
+        }
+
+        public IEnumerable<URL> GetDomainString(string domain)
+        {
+            return appContext.URLs.Where(x => x.Url.ToString() == domain);
+        }
+
+        public void UpLoadDomainLink(SiteMapUrl siteMapUrl)
+        {
+            appContext.SiteMapUrls.Add(siteMapUrl);
+            appContext.SaveChanges();
+        }
+
+        public void UpLoadDomainString(URL url)
+        {
+            appContext.URLs.Add(url);
+            appContext.SaveChanges();
+        }
     }
 }
