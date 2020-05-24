@@ -39,7 +39,22 @@ namespace SiteMap.Data
         public static string[] GetUrls(string Link, string domainUrl, List<string> DomainUrls)
         {
             XmlDocument doc = new XmlDocument();
-            doc.Load(Link);
+           // doc.Load(Link);
+
+            try
+            {
+                doc.Load(Link);
+
+            }
+            catch (WebException ex)
+            {
+                return null;
+            }
+            catch (XmlException ex)
+            {
+                return null;
+            }
+
             string[] XMLUrlStrings = doc.InnerText.Split(new string[] { domainUrl }, StringSplitOptions.None);
             List<string> listXMLUrlStrings = new List<string>(XMLUrlStrings);
             if(listXMLUrlStrings[0] == "")
@@ -60,23 +75,22 @@ namespace SiteMap.Data
             return XMLUrlStrings;
         }
 
-        //public void countDown(int integer)
-        //{
-        //    if (integer > 0)
-        //    {
-        //        ListBox1.Items.Add(integer.ToString());
-        //        integer--;
-        //        countDown(integer);
-        //    }
-        //}
-
-
-        public static double ResponseTime(string domain, string url, Func<SiteMapUrl> AddLinkToDbMethod)
+        
+        public static double ResponseTime(string domain, string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(domain + url);
             System.Diagnostics.Stopwatch timer = new Stopwatch();
             timer.Start();
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            }
+            catch (WebException ex)
+            {
+                return 0;
+            }
+
             timer.Stop();
             TimeSpan timeTaken = timer.Elapsed;
             return timeTaken.TotalMilliseconds;
@@ -85,14 +99,4 @@ namespace SiteMap.Data
 }
 
 
-
-//XmlDocument doc = new XmlDocument();
-//            
-//    doc.Load(SiteMapString);
-//            string[] XMLUrlStrings = doc.InnerText.Split(new string[] { newURL.Url }, StringSplitOptions.None);
-//            if(XMLUrlStrings[1].Contains("xml"))
-//            {
-//                XmlDocument docr = new XmlDocument();
-//docr.Load(newURL.Url + XMLUrlStrings[1].ToString());
-//                string[] XMLUrlStringsr = docr.InnerText.Split(new string[] { newURL.Url }, StringSplitOptions.None);
 

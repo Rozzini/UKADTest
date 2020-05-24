@@ -9,7 +9,7 @@ namespace SiteMap.Repo
     public interface IRepository
     {
         bool Equality(string domain);
-        IEnumerable<URL> GetDomainString(string domain);
+        IEnumerable<URL> GetDomain(string domain);
 
         IEnumerable<SiteMapUrl> GetDomainLinks(int dominaId);
         void UpLoadDomainString(URL url);

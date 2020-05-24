@@ -10,7 +10,6 @@ namespace SiteMap.Models
     {
         public int ID { get; set; }
 
-        [Required]
         public string Url { get; set; }
 
         public ICollection<SiteMapUrl> siteMapUrls { get; set; }

@@ -2,7 +2,6 @@ D:\TESTUKD\UKADTest\UKADTest\SiteMap\bin\Debug\netcoreapp3.1\appsettings.Develop
 D:\TESTUKD\UKADTest\UKADTest\SiteMap\bin\Debug\netcoreapp3.1\appsettings.json
 D:\TESTUKD\UKADTest\UKADTest\SiteMap\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
 D:\TESTUKD\UKADTest\UKADTest\SiteMap\bin\Debug\netcoreapp3.1\SiteMap.exe
-D:\TESTUKD\UKADTest\UKADTest\SiteMap\obj\Debug\netcoreapp3.1\SiteMap.csprojAssemblyReference.cache
 D:\TESTUKD\UKADTest\UKADTest\SiteMap\obj\Debug\netcoreapp3.1\staticwebassets\SiteMap.StaticWebAssets.Manifest.cache
 D:\TESTUKD\UKADTest\UKADTest\SiteMap\obj\Debug\netcoreapp3.1\staticwebassets\SiteMap.StaticWebAssets.xml
 D:\TESTUKD\UKADTest\UKADTest\SiteMap\obj\Debug\netcoreapp3.1\SiteMap.RazorAssemblyInfo.cache

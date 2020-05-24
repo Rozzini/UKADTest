@@ -1,4 +1,5 @@
-﻿using SiteMap.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SiteMap.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,9 +29,9 @@ namespace SiteMap.Repo
             return appContext.SiteMapUrls.Where(x => x.URLId == dominaId);
         }
 
-        public IEnumerable<URL> GetDomainString(string domain)
+        public IEnumerable<URL> GetDomain(string domain)
         {
-            return appContext.URLs.Where(x => x.Url.ToString() == domain);
+            return appContext.URLs.Where(x => x.Url == domain);
         }
 
         public void UpLoadDomainLink(SiteMapUrl siteMapUrl)

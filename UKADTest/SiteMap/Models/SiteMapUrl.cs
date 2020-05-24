@@ -15,8 +15,8 @@ namespace SiteMap.Models
 
         public double AccessMS { get; set; }
 
-        [ForeignKey("URL")]
         public int URLId { get; set; }
+        
         public URL URL { get; set; }
     }
 }

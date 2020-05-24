@@ -33,11 +33,15 @@ namespace SiteMap.Controllers
                 _repository.UpLoadDomainString(newURL);
             }
 
+            IEnumerable<URL> IenumCurrentUrl = _repository.GetDomain(newURL.Url);
+
+            URL CurrentUrl = IenumCurrentUrl.First();
+
             string URL;
+
             URL = newURL.Url + "/robots.txt";
 
             List<string> RobotsLinks = DataAccess.GetRobotTxt(URL);
-
 
             int i = 0;  //variable for placing break point here
 
@@ -46,6 +50,15 @@ namespace SiteMap.Controllers
             foreach(string x in RobotsLinks)
             {
                 DataAccess.GetUrls(x, newURL.Url, DomainUrls);
+            }
+
+            SiteMapUrl siteMapUrl = new SiteMapUrl();
+            foreach (string x in DomainUrls)
+            {
+                siteMapUrl.URL = CurrentUrl;
+                siteMapUrl.SiteMapUrlString = x;
+                siteMapUrl.AccessMS = DataAccess.ResponseTime(CurrentUrl.Url, x);
+                _repository.UpLoadDomainLink(siteMapUrl);
             }
         }
 
