@@ -3,15 +3,14 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    
+<p>@ViewBag.ErrorMessage</p>
 
 
 @using (Html.BeginForm("GetUrls", "Home", FormMethod.Post))
 {
-    <input type="text" name="URL" id="URL" />
+    <label> Domain </label>
+    <input type="text" name="URL" id="URL" placeholder="https://domain.com" />
     <input type="submit" value="Send" />
 }
 
@@ -36,3 +35,4 @@
         </div>
     </div>
 }
+

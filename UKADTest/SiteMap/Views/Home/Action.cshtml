@@ -2,11 +2,22 @@
 @{
     var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.ID).ToList());
     var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.AccessMS).ToList());
+    var Urls = Model.OrderByDescending(x => x.AccessMS).ToList();
     ViewData["Title"] = "Action";
 }
 <link rel="stylesheet" href="~/css/ScrollingTable.css">
 
-<h1>Action</h1>
+
+<div class="box-body">
+
+    <div class="chart-container">
+        <canvas id="chart" style="width:100%; height:450px"></canvas>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
 
 
 <div class="table-wrapper-scroll-y my-custom-scrollbar">
@@ -21,14 +32,14 @@
             </th>
         </tr>
 
-        @foreach (var item in Model)
+        @foreach (var item in Urls)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.SiteMapUrlString)
+                    @item.SiteMapUrlString
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.AccessMS)
+                    @item.AccessMS
                 </td>
             </tr>
         }
@@ -36,20 +47,12 @@
 
 </div>
 
-<div class="box-body">
 
-    <div class="chart-container">
-        <canvas id="chart" style="width:100%; height:500px"></canvas>
-    </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
 <script type="text/javascript">
 
         $(function () {
-    var chartName = "chart";
+        var chartName = "chart";
         var ctx = document.getElementById(chartName).getContext('2d');
         var data = {
                 labels: @Html.Raw(XLabels),
@@ -85,7 +88,7 @@
                     ],
                     borderWidth: 1,
                     data: @Html.Raw(YValues)
-    }]
+                }]
             };
 
 var options = {

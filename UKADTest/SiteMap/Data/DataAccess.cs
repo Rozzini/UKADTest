@@ -15,7 +15,20 @@ namespace SiteMap.Data
         public static List<string> GetRobotTxt(string url)
         {
             WebClient client = new WebClient();
-            Stream stream = client.OpenRead(url);          
+            Stream stream;
+            try
+            {
+                stream = client.OpenRead(url);
+
+            }
+            catch (WebException ex)
+            {
+                return null;
+            }
+            catch (XmlException ex)
+            {
+                return null;
+            }
             List<string> XMLSiteMapsLinks = new List<string>();
 
             string line;
