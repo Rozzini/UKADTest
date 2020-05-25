@@ -40,9 +40,10 @@ namespace SiteMap.Controllers
 
         public async Task<ActionResult> DropDownList(URL selectedUrl)
         {
-            if(selectedUrl.ID == 0)
+            if(selectedUrl == null || selectedUrl.ID == 0)
             {
-                ModelState.AddModelError("", "Select domain");
+                TempData["ErrorMessage"] = "Search history is empty";
+                return RedirectToAction("Index");
             }
 
             return RedirectToAction("Action", new { selectedUrl.ID });

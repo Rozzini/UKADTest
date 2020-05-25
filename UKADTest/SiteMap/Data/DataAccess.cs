@@ -25,10 +25,7 @@ namespace SiteMap.Data
             {
                 return null;
             }
-            catch (XmlException ex)
-            {
-                return null;
-            }
+            
             List<string> XMLSiteMapsLinks = new List<string>();
 
             string line;
@@ -52,7 +49,6 @@ namespace SiteMap.Data
         public static List<string> GetUrls(string Link, string domainUrl, List<string> DomainUrls)
         {
             XmlDocument doc = new XmlDocument();
-           // doc.Load(Link);
 
             try
             {
@@ -68,9 +64,8 @@ namespace SiteMap.Data
                 return null;
             }
 
-            //var bookNodes = doc.Descendants("book").Where(b => b.Parent.Name == "shop");
             XmlNodeList XMLUrlStrings = doc.GetElementsByTagName("loc");
-            //string[] XMLUrlStrings = doc.InnerText.Split(new string[] { "http" }, StringSplitOptions.None);
+
             List<string> listXMLUrlStrings = new List<string>();
 
             for (int i = 0; i < XMLUrlStrings.Count; i++)
