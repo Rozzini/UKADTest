@@ -20,6 +20,8 @@ namespace SiteMap.Controllers
     {
         private readonly IRepository _repository;
         private readonly ILogger<HomeController> _logger;
+
+
         public HomeController(IRepository repository, ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -28,13 +30,11 @@ namespace SiteMap.Controllers
 
         public IActionResult Index()
         {
-            List<URL> DomainLinks = new List<URL>();
-            DomainLinks = _repository.GetAllDomains();
-            ViewBag.ListOfDomains = DomainLinks;
+            ViewBag.ListOfDomains = _repository.GetAllDomains();
             return View();
         }
 
-
+        
 
 
         public async Task<ActionResult> DropDownList(URL selectedUrl)
@@ -47,7 +47,7 @@ namespace SiteMap.Controllers
             return RedirectToAction("Action", new { selectedUrl.ID });
         }
 
-        List<string> DomainUrls = new List<string>();
+        
 
 
         public IActionResult Action(int ID)
@@ -58,9 +58,7 @@ namespace SiteMap.Controllers
         [HttpPost]
         public async Task<ActionResult> GetUrls(URL newURL)
         {
-            IEnumerable<URL> IenumCurrentUrl = _repository.GetDomain(newURL.Url);
-
-            URL CurrentUrl = IenumCurrentUrl.First();
+            
 
             if (!_repository.Equality(newURL.Url))
             {
@@ -68,11 +66,12 @@ namespace SiteMap.Controllers
             }
             else
             {
-                return RedirectToAction("Action", new { CurrentUrl.ID });
+                return RedirectToAction("Action", new { newURL.ID });
             }
 
+            IEnumerable<URL> IenumCurrentUrl = _repository.GetDomain(newURL.Url);
 
-            
+            URL CurrentUrl = IenumCurrentUrl.First();
 
             string URL;
 
@@ -80,10 +79,10 @@ namespace SiteMap.Controllers
 
             List<string> RobotsLinks = DataAccess.GetRobotTxt(URL);
 
+            List<string> DomainUrls = new List<string>();
 
-            
 
-            foreach(string x in RobotsLinks)
+            foreach (string x in RobotsLinks)
             {
                 DataAccess.GetUrls(x, newURL.Url, DomainUrls);
             }
@@ -93,22 +92,16 @@ namespace SiteMap.Controllers
             {
                 siteMapUrl.URL = CurrentUrl;
                 siteMapUrl.SiteMapUrlString = x;
-                siteMapUrl.AccessMS = DataAccess.ResponseTime(CurrentUrl.Url, x);
-                _repository.UpLoadDomainLink(siteMapUrl);
+                siteMapUrl.AccessMS = DataAccess.ResponseTime(x);
+                if (siteMapUrl.AccessMS != 0)
+                {
+                    _repository.UpLoadDomainLink(siteMapUrl);
+                }
             }
             return RedirectToAction("Action", new { CurrentUrl.ID });
         }
 
-        //public async ActionResult SearchHistoty(URL newURL)
-        //{
-        //    URLsViewModel uRLsViewModel = new URLsViewModel();
-        //    foreach (URL x in _repository.GetAllDomains())
-        //    {
-        //        uRLsViewModel.URLs.Add(x);
-
-        //    }
-        //}
-
+        
         public IActionResult Privacy()
         {
             return View();

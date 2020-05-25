@@ -31,7 +31,7 @@ namespace SiteMap.Repo
 
         public List<URL> GetAllDomains()
         {
-            return appContext.URLs.ToList(); ;
+            return appContext.URLs.ToList();
         }
 
         public IEnumerable<URL> GetDomain(string domain)

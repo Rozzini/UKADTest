@@ -36,7 +36,7 @@ namespace SiteMap.Data
             return XMLSiteMapsLinks;           
         }
 
-        public static string[] GetUrls(string Link, string domainUrl, List<string> DomainUrls)
+        public static List<string> GetUrls(string Link, string domainUrl, List<string> DomainUrls)
         {
             XmlDocument doc = new XmlDocument();
            // doc.Load(Link);
@@ -55,30 +55,39 @@ namespace SiteMap.Data
                 return null;
             }
 
-            string[] XMLUrlStrings = doc.InnerText.Split(new string[] { domainUrl }, StringSplitOptions.None);
-            List<string> listXMLUrlStrings = new List<string>(XMLUrlStrings);
-            if(listXMLUrlStrings[0] == "")
+            //var bookNodes = doc.Descendants("book").Where(b => b.Parent.Name == "shop");
+            XmlNodeList XMLUrlStrings = doc.GetElementsByTagName("loc");
+            //string[] XMLUrlStrings = doc.InnerText.Split(new string[] { "http" }, StringSplitOptions.None);
+            List<string> listXMLUrlStrings = new List<string>();
+
+            for (int i = 0; i < XMLUrlStrings.Count; i++)
+            {
+                listXMLUrlStrings.Add(XMLUrlStrings[i].InnerXml);
+            }
+
+            if (listXMLUrlStrings[0] == "")
             {
                 listXMLUrlStrings.RemoveAt(0);
             }
-            if (XMLUrlStrings.Length>1 && XMLUrlStrings[1].Contains("xml"))
+
+            if (listXMLUrlStrings.Count>1 && listXMLUrlStrings[0].Contains("xml"))
             {
                 foreach(string x in listXMLUrlStrings)
                 {
-                    GetUrls(domainUrl + x, domainUrl, DomainUrls);
+                    GetUrls(x, domainUrl, DomainUrls);
                 }
             }
             foreach(string x in listXMLUrlStrings)
             {
                 DomainUrls.Add(x);
             }
-            return XMLUrlStrings;
+            return listXMLUrlStrings;
         }
 
         
-        public static double ResponseTime(string domain, string url)
+        public static double ResponseTime(string url)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(domain + url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             System.Diagnostics.Stopwatch timer = new Stopwatch();
             timer.Start();
             try
