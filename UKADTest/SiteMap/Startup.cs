@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SiteMap.Repo;
 
 namespace SiteMap
 {
@@ -25,6 +26,7 @@ namespace SiteMap
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddTransient<IRepository, Repository>();
             services.AddDbContext<AppContext>(options =>
                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }

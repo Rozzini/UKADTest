@@ -10,81 +10,98 @@ using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SiteMap.Models;
+using SiteMap.Repo;
+using SiteMap.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SiteMap.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IRepository _repository;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+
+        public HomeController(IRepository repository, ILogger<HomeController> logger)
         {
             _logger = logger;
-        }
-
-        [HttpPost]
-        public void GetMap(URL newURL)
-        {
-            string SiteMapString = null;
-            string url;
-            string SiteMap = "Sitemap:";
-            string DotXML = ".xml";
-            url = newURL.Url + "/robots.txt";
-            WebClient client = new WebClient();
-            Stream stream = client.OpenRead(url);
-            //StreamReader reader = new StreamReader(stream);
-            //String content = reader.ReadToEnd();
-            List<string> content = new List<string>();
-            string line;
-            using (StreamReader file = new StreamReader(stream))
-            {
-                while ((line = file.ReadLine()) != null)
-                {
-                    if (line.Contains("Sitemap"))
-                    {
-                        content.Add(line);
-                    }
-                }
-            }
-           for(int i = 0; i<content.Count; i++)
-            {
-                content[i] = content[i].Remove(0, 9);
-            }
-            for (int i = 0; i < content.Count; i++)
-            {
-                SiteMapString = content[i];
-            }
-            
-            XmlDocument doc = new XmlDocument();            
-            doc.Load(SiteMapString);
-            string[] XMLUrlStrings = doc.InnerText.Split(new string[] { newURL.Url }, StringSplitOptions.None);
-            if(XMLUrlStrings[1].Contains("xml"))
-            {
-                XmlDocument docr = new XmlDocument();
-                docr.Load(newURL.Url + XMLUrlStrings[1].ToString());
-                string[] XMLUrlStringsr = docr.InnerText.Split(new string[] { newURL.Url }, StringSplitOptions.None);
-
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(newURL.Url + XMLUrlStringsr[1]);
-
-                System.Diagnostics.Stopwatch timer = new Stopwatch();
-                timer.Start();
-
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                timer.Stop();
-
-                TimeSpan timeTaken = timer.Elapsed;
-            }
-            else
-            {
-            }
+            _repository = repository;
         }
 
         public IActionResult Index()
         {
+            ViewBag.ListOfDomains = _repository.GetAllDomains();
             return View();
         }
 
+        
+
+
+        public async Task<ActionResult> DropDownList(URL selectedUrl)
+        {
+            if(selectedUrl.ID == 0)
+            {
+                ModelState.AddModelError("", "Select domain");
+            }
+
+            return RedirectToAction("Action", new { selectedUrl.ID });
+        }
+
+        
+
+
+        public IActionResult Action(int ID)
+        {
+            return View(_repository.GetDomainLinks(ID));
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> GetUrls(URL newURL)
+        {
+            
+
+            if (!_repository.Equality(newURL.Url))
+            {
+                _repository.UpLoadDomainString(newURL);
+            }
+            else
+            {
+                return RedirectToAction("Action", new { newURL.ID });
+            }
+
+            IEnumerable<URL> IenumCurrentUrl = _repository.GetDomain(newURL.Url);
+
+            URL CurrentUrl = IenumCurrentUrl.First();
+
+            string URL;
+
+            URL = newURL.Url + "/robots.txt";
+
+            List<string> RobotsLinks = DataAccess.GetRobotTxt(URL);
+
+            List<string> DomainUrls = new List<string>();
+
+
+            foreach (string x in RobotsLinks)
+            {
+                DataAccess.GetUrls(x, newURL.Url, DomainUrls);
+            }
+
+            SiteMapUrl siteMapUrl = new SiteMapUrl();
+            foreach (string x in DomainUrls)
+            {
+                siteMapUrl.URL = CurrentUrl;
+                siteMapUrl.SiteMapUrlString = x;
+                siteMapUrl.AccessMS = DataAccess.ResponseTime(x);
+                if (siteMapUrl.AccessMS != 0)
+                {
+                    _repository.UpLoadDomainLink(siteMapUrl);
+                }
+            }
+            return RedirectToAction("Action", new { CurrentUrl.ID });
+        }
+
+        
         public IActionResult Privacy()
         {
             return View();
