@@ -9,14 +9,14 @@ namespace SiteMap.Models
 {
     public class SiteMapUrl
     {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
         public string SiteMapUrlString { get; set; }
 
         public double AccessMS { get; set; }
 
-        public int URLId { get; set; }
-        
-        public URL URL { get; set; }
+        public virtual URL URL { get; set; }
+
     }
 }

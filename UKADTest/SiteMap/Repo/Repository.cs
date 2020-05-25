@@ -26,7 +26,7 @@ namespace SiteMap.Repo
 
         public IEnumerable<SiteMapUrl> GetDomainLinks(int dominaId)
         {
-            return appContext.SiteMapUrls.Where(x => x.URLId == dominaId);
+            return appContext.SiteMapUrls.Where(x => x.URL.ID == dominaId);
         }
 
         public IEnumerable<URL> GetDomain(string domain)
@@ -36,7 +36,7 @@ namespace SiteMap.Repo
 
         public void UpLoadDomainLink(SiteMapUrl siteMapUrl)
         {
-            appContext.SiteMapUrls.Add(siteMapUrl);
+            appContext.SiteMapUrls.Add(new SiteMapUrl { SiteMapUrlString = siteMapUrl.SiteMapUrlString, AccessMS = siteMapUrl.AccessMS, URL = siteMapUrl.URL });
             appContext.SaveChanges();
         }
 

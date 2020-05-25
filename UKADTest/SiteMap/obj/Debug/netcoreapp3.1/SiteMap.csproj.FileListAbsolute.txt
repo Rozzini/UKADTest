@@ -64,3 +64,4 @@ D:\TESTUKD\UKADTest\UKADTest\SiteMap\bin\Debug\netcoreapp3.1\runtimes\win\lib\ne
 D:\TESTUKD\UKADTest\UKADTest\SiteMap\obj\Debug\netcoreapp3.1\SiteMap.Views.pdb
 D:\TESTUKD\UKADTest\UKADTest\SiteMap\obj\Debug\netcoreapp3.1\SiteMap.dll
 D:\TESTUKD\UKADTest\UKADTest\SiteMap\obj\Debug\netcoreapp3.1\SiteMap.pdb
+D:\TESTUKD\UKADTest\UKADTest\SiteMap\obj\Debug\netcoreapp3.1\SiteMap.csprojAssemblyReference.cache
