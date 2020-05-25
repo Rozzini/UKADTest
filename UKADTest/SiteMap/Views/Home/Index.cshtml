@@ -1,4 +1,5 @@
-﻿@{
+﻿@model SiteMap.Models.URL
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -8,8 +9,30 @@
 </div>
 
 
-@using (Html.BeginForm("GetMap", "Home", FormMethod.Post))
+@using (Html.BeginForm("GetUrls", "Home", FormMethod.Post))
 {
     <input type="text" name="URL" id="URL" />
     <input type="submit" value="Send" />
+}
+
+@using (Html.BeginForm("DropDownList", "Home", FormMethod.Post))
+{
+    <div class="form-group">
+        <div class="row">
+            <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+                <select asp-for="ID"
+                        class="form-control"
+                        asp-items="@(new SelectList(@ViewBag.ListOfDomains, "ID", "Url"))">
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+                <input id="Submit1" type="submit" value="submit" />
+            </div>
+        </div>
+    </div>
 }

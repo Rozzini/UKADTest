@@ -29,6 +29,11 @@ namespace SiteMap.Repo
             return appContext.SiteMapUrls.Where(x => x.URL.ID == dominaId);
         }
 
+        public List<URL> GetAllDomains()
+        {
+            return appContext.URLs.ToList(); ;
+        }
+
         public IEnumerable<URL> GetDomain(string domain)
         {
             return appContext.URLs.Where(x => x.Url == domain);
@@ -45,5 +50,7 @@ namespace SiteMap.Repo
             appContext.URLs.Add(url);
             appContext.SaveChanges();
         }
+
+       
     }
 }

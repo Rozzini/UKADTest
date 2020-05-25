@@ -1,0 +1,38 @@
+﻿@model IEnumerable<SiteMap.Models.SiteMapUrl>
+@{
+    ViewData["Title"] = "Action";
+}
+
+<link rel="stylesheet" href="~/css/ScrollingTable.css">
+
+<h1>Action</h1>
+
+
+<div class="table-wrapper-scroll-y my-custom-scrollbar">
+
+    <table class="table table-bordered table-striped mb-0">
+        <tr>
+            <th>
+                URL
+            </th>
+            <th>
+                MS
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SiteMapUrlString)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AccessMS)
+                </td>
+            </tr>
+        }
+    </table>
+
+</div>
+
+

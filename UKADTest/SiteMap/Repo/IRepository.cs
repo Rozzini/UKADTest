@@ -11,6 +11,8 @@ namespace SiteMap.Repo
         bool Equality(string domain);
         IEnumerable<URL> GetDomain(string domain);
 
+        List<URL> GetAllDomains();
+
         IEnumerable<SiteMapUrl> GetDomainLinks(int dominaId);
         void UpLoadDomainString(URL url);
 
