@@ -30,18 +30,18 @@ namespace SiteMap.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.ErrorMessage = TempData["ErrorMessage"] as string;
             ViewBag.ListOfDomains = _repository.GetAllDomains();
             return View();
         }
 
         
-
-
         public async Task<ActionResult> DropDownList(URL selectedUrl)
         {
-            if(selectedUrl.ID == 0)
+            if(selectedUrl == null || selectedUrl.ID == 0)
             {
-                ModelState.AddModelError("", "Select domain");
+                TempData["ErrorMessage"] = "Search history is empty";
+                return RedirectToAction("Index");
             }
 
             return RedirectToAction("Action", new { selectedUrl.ID });
@@ -58,55 +58,62 @@ namespace SiteMap.Controllers
         [HttpPost]
         public async Task<ActionResult> GetUrls(URL newURL)
         {
-            
+            if(newURL.Url == null || newURL.Url.Length < 5)
+            {
+                TempData["ErrorMessage"] = "Wrong format";
+                return RedirectToAction("Index");
+            }
 
-            if (!_repository.Equality(newURL.Url))
+            string URL;
+
+            URL = newURL.Url + "/robots.txt";
+
+
+            List<string> RobotsLinks = DataAccess.GetRobotTxt(URL);
+
+            if (RobotsLinks == null || RobotsLinks.Count == 0)
+            {
+                TempData["ErrorMessage"] = "Wrong format or cannot find 'robots.txt'";
+                return RedirectToAction("Index");
+            }
+
+            if (!_repository.DomainEquality(newURL.Url))
             {
                 _repository.UpLoadDomainString(newURL);
             }
             else
             {
-                return RedirectToAction("Action", new { newURL.ID });
+                return RedirectToAction("Action", new { _repository.GetDomain(newURL.Url).First().ID });
             }
 
             IEnumerable<URL> IenumCurrentUrl = _repository.GetDomain(newURL.Url);
 
             URL CurrentUrl = IenumCurrentUrl.First();
 
-            string URL;
-
-            URL = newURL.Url + "/robots.txt";
-
-            List<string> RobotsLinks = DataAccess.GetRobotTxt(URL);
 
             List<string> DomainUrls = new List<string>();
 
 
             foreach (string x in RobotsLinks)
             {
-                DataAccess.GetUrls(x, newURL.Url, DomainUrls);
+                DataAccess.GetUrls(x, DomainUrls);
             }
 
+            
             SiteMapUrl siteMapUrl = new SiteMapUrl();
             foreach (string x in DomainUrls)
             {
                 siteMapUrl.URL = CurrentUrl;
                 siteMapUrl.SiteMapUrlString = x;
                 siteMapUrl.AccessMS = DataAccess.ResponseTime(x);
-                if (siteMapUrl.AccessMS != 0)
+                if (siteMapUrl.AccessMS != 0 && !_repository.DomainLinkEquality(x))
                 {
                     _repository.UpLoadDomainLink(siteMapUrl);
                 }
             }
             return RedirectToAction("Action", new { CurrentUrl.ID });
         }
-
-        
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
+       
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

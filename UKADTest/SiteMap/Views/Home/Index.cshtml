@@ -3,36 +3,54 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <link rel="stylesheet" href="~/css/StyleSheetMainPage1.css">
 
+    <div class="global-wrapper">
 
-@using (Html.BeginForm("GetUrls", "Home", FormMethod.Post))
-{
-    <input type="text" name="URL" id="URL" />
-    <input type="submit" value="Send" />
-}
+        <p style="color: red">@ViewBag.ErrorMessage</p>
 
-@using (Html.BeginForm("DropDownList", "Home", FormMethod.Post))
-{
-    <div class="form-group">
-        <div class="row">
-            <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
-            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-                <select asp-for="ID"
+        <div class="input-element">
+            <h5>Input domain</h5>
+            @using (Html.BeginForm("GetUrls", "Home", FormMethod.Post))
+            {
+                <input type="text" name="URL" id="URL" placeholder="https://domain.com" />
+                @*<input type="submit" value="Send" onclick="return DisplayProgressMessage(this, 'Saving...');" />*@
+                <button type="submit" id="submitButton" class="btn btn-primary" onclick="document.getElementById('loading').style.display = 'block'"> Search </button>
+            }
+        </div>
+
+        <img style="display: none;"id="loading" src="images/ajax-loader.gif" alt="" />
+
+        <div class="input-element">
+            <h5>Search History</h5>
+            @using (Html.BeginForm("DropDownList", "Home", FormMethod.Post))
+            {
+
+                <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
+
+                <select style="width: 300px" asp-for="ID"
                         class="form-control"
                         asp-items="@(new SelectList(@ViewBag.ListOfDomains, "ID", "Url"))">
                 </select>
-            </div>
+                <button type="submit" id="submitButton" class="btn btn-primary" onclick="document.getElementById('loading').style.display = 'block'"> Show </button>
+            }
         </div>
     </div>
-    <div class="form-group">
-        <div class="row">
-            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
-                <input id="Submit1" type="submit" value="submit" />
-            </div>
-        </div>
-    </div>
-}
+
+
+    <script>
+
+       $('#someLink').click(function()
+{
+    var action = '<%=Html.ResolveUrl("~/Home/GetUrls/")%>' + $('#someId').val() + '?x=' + new Date().getTime();
+    $('#loading').show()
+    $.getJSON(action, null, function(something) 
+    {
+        do stuff with something
+        $('#loading').hide()
+    });
+});
+
+    </script>
+
+    
