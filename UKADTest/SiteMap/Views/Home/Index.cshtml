@@ -1,0 +1,56 @@
+﻿@model SiteMap.Models.URL
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+    <link rel="stylesheet" href="~/css/StyleSheetMainPage1.css">
+
+    <div class="global-wrapper">
+
+        <p style="color: red">@ViewBag.ErrorMessage</p>
+
+        <div class="input-element">
+            <h5>Input domain</h5>
+            @using (Html.BeginForm("GetUrls", "Home", FormMethod.Post))
+            {
+                <input type="text" name="URL" id="URL" placeholder="https://domain.com" />
+                @*<input type="submit" value="Send" onclick="return DisplayProgressMessage(this, 'Saving...');" />*@
+                <button type="submit" id="submitButton" class="btn btn-primary" onclick="document.getElementById('loading').style.display = 'block'"> Search </button>
+            }
+        </div>
+
+        <img style="display: none;"id="loading" src="images/ajax-loader.gif" alt="" />
+
+        <div class="input-element">
+            <h5>Search History</h5>
+            @using (Html.BeginForm("DropDownList", "Home", FormMethod.Post))
+            {
+
+                <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
+
+                <select style="width: 300px" asp-for="ID"
+                        class="form-control"
+                        asp-items="@(new SelectList(@ViewBag.ListOfDomains, "ID", "Url"))">
+                </select>
+                <button type="submit" id="submitButton" class="btn btn-primary" onclick="document.getElementById('loading').style.display = 'block'"> Show </button>
+            }
+        </div>
+    </div>
+
+
+    <script>
+
+       $('#someLink').click(function()
+{
+    var action = '<%=Html.ResolveUrl("~/Home/GetUrls/")%>' + $('#someId').val() + '?x=' + new Date().getTime();
+    $('#loading').show()
+    $.getJSON(action, null, function(something) 
+    {
+        do stuff with something
+        $('#loading').hide()
+    });
+});
+
+    </script>
+
+    
