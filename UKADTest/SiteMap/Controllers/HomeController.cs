@@ -96,9 +96,10 @@ namespace SiteMap.Controllers
 
             foreach (string x in RobotsLinks)
             {
-                DataAccess.GetUrls(x, newURL.Url, DomainUrls);
+                DataAccess.GetUrls(x, DomainUrls);
             }
 
+            
             SiteMapUrl siteMapUrl = new SiteMapUrl();
             foreach (string x in DomainUrls)
             {
