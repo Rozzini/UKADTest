@@ -112,13 +112,7 @@ namespace SiteMap.Controllers
             }
             return RedirectToAction("Action", new { CurrentUrl.ID });
         }
-
-        
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
+       
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

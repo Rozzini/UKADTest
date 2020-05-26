@@ -21,7 +21,7 @@ namespace SiteMap.Data
                 stream = client.OpenRead(url);
 
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 return null;
             }
@@ -55,17 +55,16 @@ namespace SiteMap.Data
                 doc.Load(Link);
 
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 return null;
             }
-            catch (XmlException ex)
+            catch (XmlException)
             {
                 return null;
             }
 
             XmlNodeList XMLUrlStrings = doc.GetElementsByTagName("loc");
-
             List<string> listXMLUrlStrings = new List<string>();
 
             for (int i = 0; i < XMLUrlStrings.Count; i++)
@@ -103,7 +102,7 @@ namespace SiteMap.Data
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 return 0;
             }
