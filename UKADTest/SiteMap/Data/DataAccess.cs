@@ -12,6 +12,8 @@ namespace SiteMap.Data
 {
     public static class DataAccess
     {
+
+        //this method checks if there are any site map links in domin/robots.txt 
         public static List<string> GetRobotTxt(string url)
         {
             WebClient client = new WebClient();
@@ -28,7 +30,9 @@ namespace SiteMap.Data
             
             List<string> XMLSiteMapsLinks = new List<string>();
 
+            //searching for line that contains Sitemap
             string line;
+
             using (StreamReader file = new StreamReader(stream))
             {
                 while ((line = file.ReadLine()) != null)
@@ -39,6 +43,8 @@ namespace SiteMap.Data
                     }
                 }
             }
+
+            //from txt file i get xml links in format of "Sitemap: https....." so i just remove first 9 chars
             for (int i = 0; i < XMLSiteMapsLinks.Count; i++)
             {
                 XMLSiteMapsLinks[i] = XMLSiteMapsLinks[i].Remove(0, 9);
@@ -46,7 +52,8 @@ namespace SiteMap.Data
             return XMLSiteMapsLinks;           
         }
 
-        public static List<string> GetUrls(string Link, string domainUrl, List<string> DomainUrls)
+        //this method gets all links from xml file
+        public static List<string> GetUrls(string Link, List<string> DomainUrls)
         {
             XmlDocument doc = new XmlDocument();
 
@@ -64,24 +71,30 @@ namespace SiteMap.Data
                 return null;
             }
 
+
+            //take data from all nodes with tag "loc"
             XmlNodeList XMLUrlStrings = doc.GetElementsByTagName("loc");
             List<string> listXMLUrlStrings = new List<string>();
 
+            //adding urls from xml to list
             for (int i = 0; i < XMLUrlStrings.Count; i++)
             {
                 listXMLUrlStrings.Add(XMLUrlStrings[i].InnerXml);
             }
 
+            //sometimes first element could be empty, so just for this case
             if (listXMLUrlStrings[0] == "")
             {
                 listXMLUrlStrings.RemoveAt(0);
             }
 
+
+            //if list  of strings from xml file contains few more xmls, use recursion
             if (listXMLUrlStrings.Count>1 && listXMLUrlStrings[0].Contains("xml"))
             {
                 foreach(string x in listXMLUrlStrings)
                 {
-                    GetUrls(x, domainUrl, DomainUrls);
+                    GetUrls(x, DomainUrls);
                 }
             }
             foreach(string x in listXMLUrlStrings)
@@ -92,6 +105,8 @@ namespace SiteMap.Data
         }
 
         
+
+        //method for mesuring respons time from web page
         public static double ResponseTime(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
