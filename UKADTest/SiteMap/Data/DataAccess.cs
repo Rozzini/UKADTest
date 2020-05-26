@@ -15,7 +15,17 @@ namespace SiteMap.Data
         public static List<string> GetRobotTxt(string url)
         {
             WebClient client = new WebClient();
-            Stream stream = client.OpenRead(url);          
+            Stream stream;
+            try
+            {
+                stream = client.OpenRead(url);
+
+            }
+            catch (WebException)
+            {
+                return null;
+            }
+            
             List<string> XMLSiteMapsLinks = new List<string>();
 
             string line;
@@ -39,25 +49,22 @@ namespace SiteMap.Data
         public static List<string> GetUrls(string Link, string domainUrl, List<string> DomainUrls)
         {
             XmlDocument doc = new XmlDocument();
-           // doc.Load(Link);
 
             try
             {
                 doc.Load(Link);
 
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 return null;
             }
-            catch (XmlException ex)
+            catch (XmlException)
             {
                 return null;
             }
 
-            //var bookNodes = doc.Descendants("book").Where(b => b.Parent.Name == "shop");
             XmlNodeList XMLUrlStrings = doc.GetElementsByTagName("loc");
-            //string[] XMLUrlStrings = doc.InnerText.Split(new string[] { "http" }, StringSplitOptions.None);
             List<string> listXMLUrlStrings = new List<string>();
 
             for (int i = 0; i < XMLUrlStrings.Count; i++)
@@ -95,7 +102,7 @@ namespace SiteMap.Data
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 return 0;
             }

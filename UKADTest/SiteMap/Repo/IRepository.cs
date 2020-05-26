@@ -8,7 +8,8 @@ namespace SiteMap.Repo
 {
     public interface IRepository
     {
-        bool Equality(string domain);
+        bool DomainLinkEquality(string link);
+        bool DomainEquality(string domain);
         IEnumerable<URL> GetDomain(string domain);
 
         List<URL> GetAllDomains();

@@ -15,7 +15,16 @@ namespace SiteMap.Repo
             this.appContext = appDbContext;
         }
 
-        public bool Equality(string domain)
+        public bool DomainLinkEquality(string link)
+        {
+            if (appContext.SiteMapUrls.Any(o => o.SiteMapUrlString == link))
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        public bool DomainEquality(string domain)
         {
             if (appContext.URLs.Any(o => o.Url == domain))
             {
