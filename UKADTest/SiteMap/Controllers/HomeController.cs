@@ -36,8 +36,6 @@ namespace SiteMap.Controllers
         }
 
         
-
-
         public async Task<ActionResult> DropDownList(URL selectedUrl)
         {
             if(selectedUrl == null || selectedUrl.ID == 0)
