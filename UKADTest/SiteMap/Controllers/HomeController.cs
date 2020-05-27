@@ -58,24 +58,25 @@ namespace SiteMap.Controllers
         [HttpPost]
         public async Task<ActionResult> GetUrls(URL newURL)
         {
+
             if(newURL.Url == null || newURL.Url.Length < 5)
             {
                 TempData["ErrorMessage"] = "Wrong format";
                 return RedirectToAction("Index");
             }
 
-            string URL;
+            //string URL;
 
-            URL = newURL.Url + "/robots.txt";
+            //URL = newURL.Url + "/robots.txt";
 
 
-            List<string> RobotsLinks = DataAccess.GetRobotTxt(URL);
+            //List<string> RobotsLinks = DataAccess.GetRobotTxt(URL);
 
-            if (RobotsLinks == null || RobotsLinks.Count == 0)
-            {
-                TempData["ErrorMessage"] = "Wrong format or cannot find 'robots.txt'";
-                return RedirectToAction("Index");
-            }
+            //if (RobotsLinks == null || RobotsLinks.Count == 0)
+            //{
+            //    TempData["ErrorMessage"] = "Wrong format or cannot find 'robots.txt'";
+            //    return RedirectToAction("Index");
+            //}
 
             if (!_repository.DomainEquality(newURL.Url))
             {
@@ -94,16 +95,23 @@ namespace SiteMap.Controllers
             List<string> DomainUrls = new List<string>();
 
 
-            foreach (string x in RobotsLinks)
-            {
-                DataAccess.GetUrls(x, newURL.Url, DomainUrls);
-            }
+            DataAccess.GetTree(newURL.Url, CurrentUrl.Url, DomainUrls);
+            //foreach (string x in RobotsLinks)
+            //{
+            //    DataAccess.GetUrls(x, DomainUrls);
+            //}
 
             SiteMapUrl siteMapUrl = new SiteMapUrl();
+            string tempUrl;
             foreach (string x in DomainUrls)
             {
                 siteMapUrl.URL = CurrentUrl;
-                siteMapUrl.SiteMapUrlString = x;
+                if(x.Contains(CurrentUrl.Url)) siteMapUrl.SiteMapUrlString = x;
+                else
+                {
+                    tempUrl = CurrentUrl.Url + x;
+                    siteMapUrl.SiteMapUrlString = tempUrl;
+                }
                 siteMapUrl.AccessMS = DataAccess.ResponseTime(x);
                 if (siteMapUrl.AccessMS != 0 && !_repository.DomainLinkEquality(x))
                 {

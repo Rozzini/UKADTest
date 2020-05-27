@@ -1,10 +1,12 @@
-﻿using SiteMap.Models;
+﻿using HtmlAgilityPack;
+using SiteMap.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -12,6 +14,7 @@ namespace SiteMap.Data
 {
     public static class DataAccess
     {
+       
         public static List<string> GetRobotTxt(string url)
         {
             WebClient client = new WebClient();
@@ -46,7 +49,7 @@ namespace SiteMap.Data
             return XMLSiteMapsLinks;           
         }
 
-        public static List<string> GetUrls(string Link, string domainUrl, List<string> DomainUrls)
+        public static List<string> GetUrls(string Link, List<string> DomainUrls)
         {
             XmlDocument doc = new XmlDocument();
 
@@ -81,7 +84,7 @@ namespace SiteMap.Data
             {
                 foreach(string x in listXMLUrlStrings)
                 {
-                    GetUrls(x, domainUrl, DomainUrls);
+                    GetUrls(x, DomainUrls);
                 }
             }
             foreach(string x in listXMLUrlStrings)
@@ -91,7 +94,74 @@ namespace SiteMap.Data
             return listXMLUrlStrings;
         }
 
-        
+
+        public static void GetTree(string url, string domain, List<string> DomainUrls)
+        {
+            if (url.Contains("mailto")) return;
+            if (url.Contains("http") && !url.Contains(domain)) return;
+
+            string URL;
+            
+            if (!url.Contains("http"))
+            {
+                URL = domain + url;
+            }
+            else URL = url;
+
+            HttpWebRequest request = WebRequest.Create(URL) as HttpWebRequest;
+            HttpWebResponse response;
+            try
+            {
+               response = request.GetResponse() as HttpWebResponse;
+
+            }
+            catch (WebException)
+            {
+                return;
+            }
+
+            List<string> links = new List<string>();
+
+
+            HtmlWeb hw = new HtmlWeb();
+            HtmlDocument doc = hw.Load(url);
+            string TempContainerForUrl;
+
+            try
+            {
+                foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
+                {
+                    HtmlAttribute attribute = link.Attributes["href"];
+                    if (!DomainUrls.Contains(domain + attribute.Value) && !DomainUrls.Contains(attribute.Value) && attribute.Value != "#" && attribute.Value != "/")
+                    {
+                        if (attribute.Value.Contains("http") && !attribute.Value.Contains(domain)) break;
+                        if (!attribute.Value.Contains("http")) TempContainerForUrl = domain + attribute.Value;
+                        else TempContainerForUrl = attribute.Value;
+                        links.Add(TempContainerForUrl);
+                    }
+                }
+
+
+            }
+            catch (NullReferenceException)
+            {
+                return;
+            }
+            
+
+
+            foreach (string a in links)
+            {
+                if(!DomainUrls.Contains(a))
+                DomainUrls.Add(a);
+            }
+
+            foreach (string x in links)
+            {
+                GetTree(x, domain, DomainUrls);
+            }
+        }
+
         public static double ResponseTime(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
