@@ -47,9 +47,6 @@ namespace SiteMap.Controllers
             return RedirectToAction("Action", new { selectedUrl.ID });
         }
 
-        
-
-
         public IActionResult Action(int ID)
         {
             return View(_repository.GetDomainLinks(ID));
@@ -58,25 +55,22 @@ namespace SiteMap.Controllers
         [HttpPost]
         public async Task<ActionResult> GetUrls(URL newURL)
         {
+            
+            bool SiteMapMethod = true;
 
-            if(newURL.Url == null || newURL.Url.Length < 5)
+
+            if (newURL.Url == null || newURL.Url.Length < 5)
             {
                 TempData["ErrorMessage"] = "Wrong format";
                 return RedirectToAction("Index");
             }
 
-            //string URL;
+            List<string> RobotsLinks = DataAccess.GetRobotTxt(newURL.Url + "/robots.txt");
 
-            //URL = newURL.Url + "/robots.txt";
-
-
-            //List<string> RobotsLinks = DataAccess.GetRobotTxt(URL);
-
-            //if (RobotsLinks == null || RobotsLinks.Count == 0)
-            //{
-            //    TempData["ErrorMessage"] = "Wrong format or cannot find 'robots.txt'";
-            //    return RedirectToAction("Index");
-            //}
+            if (RobotsLinks == null || RobotsLinks.Count == 0)
+            {
+                SiteMapMethod = false;
+            }
 
             if (!_repository.DomainEquality(newURL.Url))
             {
@@ -94,15 +88,18 @@ namespace SiteMap.Controllers
 
             List<string> DomainUrls = new List<string>();
 
-
-            DataAccess.GetTree(newURL.Url, CurrentUrl.Url, DomainUrls);
-            //foreach (string x in RobotsLinks)
-            //{
-            //    DataAccess.GetUrls(x, DomainUrls);
-            //}
+            if(SiteMapMethod)
+            {
+                foreach (string x in RobotsLinks)
+                {
+                    DataAccess.GetUrls(x, DomainUrls);
+                }
+            }
+            else DataAccess.GetUrlsHtmlParse(newURL.Url, CurrentUrl.Url, DomainUrls);
 
             SiteMapUrl siteMapUrl = new SiteMapUrl();
             string tempUrl;
+
             foreach (string x in DomainUrls)
             {
                 siteMapUrl.URL = CurrentUrl;
