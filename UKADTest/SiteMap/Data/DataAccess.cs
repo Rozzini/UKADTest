@@ -96,13 +96,24 @@ namespace SiteMap.Data
         }
 
 
-        public static void GetUrlsHtmlParse(string url, string domain, List<string> DomainUrls)
+        public static bool GetUrlsHtmlParse(string url, string domain, List<string> DomainUrls)
         {
-            int found = domain.IndexOf(".");
-            string innerDomain = domain.Substring(8, found - 8);
+            int found;
+            string innerDomain;
+            try
+            {
+                found = domain.IndexOf(".");
+                innerDomain = domain.Substring(8, found - 8);
 
-            if (url.Contains("mailto:")) return;
-            if (url.Contains("http") && !url.Contains(innerDomain)) return;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return false;
+            }
+
+            if (innerDomain == null) return false;
+            if (url.Contains("mailto:")) return false;
+            if (url.Contains("http") && !url.Contains(innerDomain)) return false;
 
             string URL;
             
@@ -121,7 +132,7 @@ namespace SiteMap.Data
             }
             catch (WebException)
             {
-                return;
+                return false;
             }
 
             List<string> links = new List<string>();
@@ -134,7 +145,7 @@ namespace SiteMap.Data
             }
             catch (ArgumentException)
             {
-                return;
+                return false;
             }
             string TempContainerForUrl = null;
 
@@ -154,7 +165,7 @@ namespace SiteMap.Data
             }
             catch (NullReferenceException)
             {
-                return;
+                return false;
             }
             
 
@@ -168,6 +179,7 @@ namespace SiteMap.Data
             {
                 GetUrlsHtmlParse(x, domain, DomainUrls);
             }
+            return true;
         }
 
         public static double ResponseTime(string url)

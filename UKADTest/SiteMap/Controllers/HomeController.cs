@@ -88,14 +88,19 @@ namespace SiteMap.Controllers
 
             List<string> DomainUrls = new List<string>();
 
-            if(SiteMapMethod)
+            if (SiteMapMethod)
             {
                 foreach (string x in RobotsLinks)
                 {
                     DataAccess.GetUrls(x, DomainUrls);
                 }
             }
-            else DataAccess.GetUrlsHtmlParse(newURL.Url, CurrentUrl.Url, DomainUrls);
+            else
+                if (!DataAccess.GetUrlsHtmlParse(newURL.Url, CurrentUrl.Url, DomainUrls))
+            {
+                TempData["ErrorMessage"] = "Wrong format";
+                return RedirectToAction("Index");
+            }
 
             SiteMapUrl siteMapUrl = new SiteMapUrl();
             string tempUrl;
