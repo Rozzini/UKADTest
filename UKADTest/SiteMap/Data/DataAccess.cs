@@ -98,8 +98,11 @@ namespace SiteMap.Data
 
         public static void GetUrlsHtmlParse(string url, string domain, List<string> DomainUrls)
         {
+            int found = domain.IndexOf(".");
+            string innerDomain = domain.Substring(8, found - 8);
+
             if (url.Contains("mailto:")) return;
-            if (url.Contains("http") && !url.Contains(domain)) return;
+            if (url.Contains("http") && !url.Contains(innerDomain)) return;
 
             string URL;
             
@@ -134,9 +137,6 @@ namespace SiteMap.Data
                 return;
             }
             string TempContainerForUrl = null;
-            int found = domain.IndexOf(".");
-            string innerDomain = domain.Substring(8, found - 8);
-            
 
             try
             {
