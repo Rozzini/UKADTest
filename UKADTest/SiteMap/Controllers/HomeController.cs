@@ -95,36 +95,29 @@ namespace SiteMap.Controllers
                     DataAccess.GetUrls(x, DomainUrls);
                 }
             }
-            else
-                if (!DataAccess.GetUrlsHtmlParse(newURL.Url, CurrentUrl.Url, DomainUrls))
-            {
-                TempData["ErrorMessage"] = "Wrong format";
-                return RedirectToAction("Index");
-            }
+            else DataAccess.GetUrlsHtmlParse(newURL.Url, CurrentUrl.Url, DomainUrls);
 
-            List<SiteMapUrl> UrlsToUpload = new List<SiteMapUrl>();
+            SiteMapUrl siteMapUrl = new SiteMapUrl();
+            string tempUrl;
 
-            Parallel.ForEach(DomainUrls, x =>
+            foreach (string x in DomainUrls)
             {
-                SiteMapUrl siteMapUrl = new SiteMapUrl();
                 siteMapUrl.URL = CurrentUrl;
-                siteMapUrl.SiteMapUrlString = x;
-                
-                siteMapUrl.AccessMS = DataAccess.ResponseTime(x).Result;
-                UrlsToUpload.Add(siteMapUrl);
-            });
-
-
-            foreach (SiteMapUrl x in UrlsToUpload)
-            {
-                if (x.AccessMS != 0 && !_repository.DomainLinkEquality(x.SiteMapUrlString))
+                if (x.Contains(CurrentUrl.Url)) siteMapUrl.SiteMapUrlString = x;
+                else
                 {
-                    _repository.UpLoadDomainLink(x);
+                    tempUrl = CurrentUrl.Url + x;
+                    siteMapUrl.SiteMapUrlString = tempUrl;
+                }
+                siteMapUrl.AccessMS = DataAccess.ResponseTime(x);
+                if (siteMapUrl.AccessMS != 0 && !_repository.DomainLinkEquality(x))
+                {
+                    _repository.UpLoadDomainLink(siteMapUrl);
                 }
             }
             return RedirectToAction("Action", new { CurrentUrl.ID });
         }
-       
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
