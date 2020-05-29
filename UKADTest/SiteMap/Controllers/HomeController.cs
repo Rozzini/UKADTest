@@ -102,11 +102,6 @@ namespace SiteMap.Controllers
                 return RedirectToAction("Index");
             }
 
-
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-
-
-            
             List<SiteMapUrl> UrlsToUpload = new List<SiteMapUrl>();
 
             Parallel.ForEach(DomainUrls, x =>
@@ -127,12 +122,6 @@ namespace SiteMap.Controllers
                     _repository.UpLoadDomainLink(x);
                 }
             }
-
-
-            watch.Stop();
-            var elapsedMs = watch.ElapsedMilliseconds;
-
-            var a = 0;
             return RedirectToAction("Action", new { CurrentUrl.ID });
         }
        
