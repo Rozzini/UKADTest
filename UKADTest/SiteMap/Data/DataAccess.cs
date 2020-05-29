@@ -123,7 +123,23 @@ namespace SiteMap.Data
             }
             else URL = url;
 
-            HttpWebRequest request = WebRequest.Create(URL) as HttpWebRequest;
+            HttpWebRequest request;
+
+            try
+            {
+                request = WebRequest.Create(URL) as HttpWebRequest;
+
+            }
+            catch (WebException)
+            {
+                return false;
+            }
+            catch (UriFormatException)
+            {
+                return false;
+            }
+
+
             HttpWebResponse response;
             try
             {
