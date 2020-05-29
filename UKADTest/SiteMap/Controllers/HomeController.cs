@@ -102,24 +102,37 @@ namespace SiteMap.Controllers
                 return RedirectToAction("Index");
             }
 
-            SiteMapUrl siteMapUrl = new SiteMapUrl();
-            string tempUrl;
 
-            foreach (string x in DomainUrls)
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
+
+            
+            List<SiteMapUrl> UrlsToUpload = new List<SiteMapUrl>();
+
+            Parallel.ForEach(DomainUrls, x =>
             {
+                SiteMapUrl siteMapUrl = new SiteMapUrl();
                 siteMapUrl.URL = CurrentUrl;
-                if(x.Contains(CurrentUrl.Url)) siteMapUrl.SiteMapUrlString = x;
-                else
+                siteMapUrl.SiteMapUrlString = x;
+                
+                siteMapUrl.AccessMS = DataAccess.ResponseTime(x).Result;
+                UrlsToUpload.Add(siteMapUrl);
+            });
+
+
+            foreach (SiteMapUrl x in UrlsToUpload)
+            {
+                if (x.AccessMS != 0 && !_repository.DomainLinkEquality(x.SiteMapUrlString))
                 {
-                    tempUrl = CurrentUrl.Url + x;
-                    siteMapUrl.SiteMapUrlString = tempUrl;
-                }
-                siteMapUrl.AccessMS = DataAccess.ResponseTime(x);
-                if (siteMapUrl.AccessMS != 0 && !_repository.DomainLinkEquality(x))
-                {
-                    _repository.UpLoadDomainLink(siteMapUrl);
+                    _repository.UpLoadDomainLink(x);
                 }
             }
+
+
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+
+            var a = 0;
             return RedirectToAction("Action", new { CurrentUrl.ID });
         }
        

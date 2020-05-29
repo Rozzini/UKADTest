@@ -182,7 +182,7 @@ namespace SiteMap.Data
             return true;
         }
 
-        public static double ResponseTime(string url)
+        public static async Task<double> ResponseTime(string url)
         {
             HttpWebRequest request;
             try
