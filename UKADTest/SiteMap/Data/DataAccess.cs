@@ -129,7 +129,6 @@ namespace SiteMap.Data
 
         public static void GetUrlsHtmlParse(string url, string domain, List<string> DomainUrls)
         {
-            Logger.Logger.Default.Write("CHEKING: " + url + ";");
             string innerDomain;
             try
             {
@@ -192,125 +191,7 @@ namespace SiteMap.Data
                 GetUrlsHtmlParse(link, domain, DomainUrls);
             }
         }
-
-        //public static bool GetUrlsHtmlParse(string url, string domain, List<string> DomainUrls)
-        //{
-        //    int found;
-        //    string innerDomain;
-        //    try
-        //    {
-        //        found = domain.IndexOf(".");
-        //        innerDomain = domain.Substring(8, found - 8);
-
-        //    }
-        //    catch (ArgumentOutOfRangeException)
-        //    {
-        //        return false;
-        //    }
-
-        //    if (innerDomain == null) return false;
-
-        //    string URL;
-
-        //    if (!url.Contains("http"))
-        //    {
-        //        URL = domain + url;
-        //    }
-        //    else URL = url;
-
-        //    HttpWebRequest request;
-
-        //    try
-        //    {
-        //        request = WebRequest.Create(URL) as HttpWebRequest;
-
-        //    }
-        //    catch (WebException)
-        //    {
-        //        return false;
-        //    }
-        //    catch (UriFormatException)
-        //    {
-        //        return false;
-        //    }
-
-
-        //    HttpWebResponse response;
-        //    try
-        //    {
-        //       response = request.GetResponse() as HttpWebResponse;
-
-        //    }
-        //    catch (WebException)
-        //    {
-        //        return false;
-        //    }
-
-        //    List<string> links = new List<string>();
-
-        //    HtmlWeb hw = new HtmlWeb() { AutoDetectEncoding = true };
-        //    HtmlDocument doc;
-        //    try
-        //    {
-        //       doc = hw.Load(url);
-        //    }
-        //    catch (ArgumentException)
-        //    {
-        //        return false;
-        //    }
-
-        //    string TempContainerForUrl = null;
-
-
-        //    try
-        //    {
-        //        Logger.Logger.Default.Write("parsing " + url);
-        //    }
-        //    catch (Exception exception)
-        //    {
-
-        //    }
-
-
-        //    try
-        //    {
-        //        Parallel.ForEach(doc.DocumentNode.SelectNodes("//a[@href]"), link =>
-        //       {
-        //           try
-        //           {
-        //               HtmlAttribute attribute = link.Attributes["href"];
-        //               if (!DomainUrls.Contains(domain + attribute.Value) && !DomainUrls.Contains(attribute.Value) && attribute.Value != "#" && attribute.Value != "/")
-        //               {
-        //                   if (!attribute.Value.Contains("http")) TempContainerForUrl = domain + attribute.Value;
-        //                   else TempContainerForUrl = attribute.Value;
-        //                   if (TempContainerForUrl.Contains(innerDomain) && !TempContainerForUrl.Contains("mailto:") && !links.Contains(TempContainerForUrl) && TempContainerForUrl != null && !DomainUrls.Contains(TempContainerForUrl))
-        //                       links.Add(TempContainerForUrl);
-        //               }
-        //           }
-        //           catch (Exception exception)
-        //           {
-
-        //           }
-        //       });
-        //    }
-        //    catch (Exception exception)
-        //    {
-
-        //    }
-
-        //    foreach (string a in links)
-        //    {
-        //        if (!DomainUrls.Contains(a))
-        //        Logger.Logger.Default.Write("ADDED: " + a + "|");
-        //        DomainUrls.Add(a);
-        //    }
-
-        //    foreach (string x in links)
-        //    {
-        //        GetUrlsHtmlParse(x, domain, DomainUrls);
-        //    }
-        //    return true;
-        //}
+      
 
         public async static Task<double> ResponseTime(string url)
         {

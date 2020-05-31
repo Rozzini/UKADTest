@@ -119,25 +119,7 @@ namespace SiteMap.Controllers
                     _repository.UpLoadDomainLink(x);
                 }
             }
-            Logger.Logger.Default.Write("uppload finished");
-
-
-            //foreach (string x in DomainUrls)
-            //{
-            //    siteMapUrl.URL = CurrentUrl;
-            //    if (x.Contains(CurrentUrl.Url)) siteMapUrl.SiteMapUrlString = x;
-            //    else
-            //    {
-            //        tempUrl = CurrentUrl.Url + x;
-            //        siteMapUrl.SiteMapUrlString = tempUrl;
-            //    }
-            //    siteMapUrl.AccessMS = DataAccess.ResponseTime(x);
-            //    if (siteMapUrl.AccessMS != 0 && !_repository.DomainLinkEquality(x))
-            //    {
-            //        _repository.UpLoadDomainLink(siteMapUrl);
-            //    }
-            //}
-
+            
 
             return RedirectToAction("Action", new { CurrentUrl.ID });
         }
