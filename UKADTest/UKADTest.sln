@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiteMap", "SiteMap\SiteMap.csproj", "{5B0FAB11-A067-46E1-B089-534AB85DFB57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SiteMap", "SiteMap\SiteMap.csproj", "{5B0FAB11-A067-46E1-B089-534AB85DFB57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{D92EC245-EFCC-48E8-A499-88AE19E4B369}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{5B0FAB11-A067-46E1-B089-534AB85DFB57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B0FAB11-A067-46E1-B089-534AB85DFB57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B0FAB11-A067-46E1-B089-534AB85DFB57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D92EC245-EFCC-48E8-A499-88AE19E4B369}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D92EC245-EFCC-48E8-A499-88AE19E4B369}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D92EC245-EFCC-48E8-A499-88AE19E4B369}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D92EC245-EFCC-48E8-A499-88AE19E4B369}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

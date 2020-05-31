@@ -13,6 +13,37 @@ using System.Xml;
 
 namespace SiteMap.Data
 {
+
+    class ExceptionHandler
+    {
+        private static ExceptionHandler instance;
+
+        private ExceptionHandler()
+        { }
+
+        public static ExceptionHandler getInstance()
+        {
+            if (instance == null)
+                instance = new ExceptionHandler();
+            return instance;
+        }
+
+        public void Handle(Action op, Action<Exception> result)
+        {
+            try
+            {
+                op();
+            }
+            catch (Exception exception)
+            {
+                //check type of exceprion
+                //if such exception has global handling ( e.g. show error message or log it - do it here
+                // othervise call result with this exception
+                result(exception);
+            }
+        }
+    }
+
     public static class DataAccess
     {
        
@@ -96,109 +127,192 @@ namespace SiteMap.Data
         }
 
 
-        public static bool GetUrlsHtmlParse(string url, string domain, List<string> DomainUrls)
+        public static void GetUrlsHtmlParse(string url, string domain, List<string> DomainUrls)
         {
-            int found;
+            Logger.Logger.Default.Write("CHEKING: " + url + ";");
             string innerDomain;
             try
             {
-                found = domain.IndexOf(".");
+                int found = domain.IndexOf(".");
                 innerDomain = domain.Substring(8, found - 8);
-
             }
             catch (ArgumentOutOfRangeException)
             {
-                return false;
+                return;
             }
 
-            if (innerDomain == null) return false;
-            if (url.Contains("mailto:")) return false;
-            if (url.Contains("http") && !url.Contains(innerDomain)) return false;
-
-            string URL;
-            
-            if (!url.Contains("http"))
-            {
-                URL = domain + url;
-            }
-            else URL = url;
-
-            HttpWebRequest request;
-
-            try
-            {
-                request = WebRequest.Create(URL) as HttpWebRequest;
-
-            }
-            catch (WebException)
-            {
-                return false;
-            }
-            catch (UriFormatException)
-            {
-                return false;
-            }
-
-
-            HttpWebResponse response;
-            try
-            {
-               response = request.GetResponse() as HttpWebResponse;
-
-            }
-            catch (WebException)
-            {
-                return false;
-            }
+            if (innerDomain == null) return;
 
             List<string> links = new List<string>();
 
-            HtmlWeb hw = new HtmlWeb() { AutoDetectEncoding = true };
+            HtmlWeb htmlWeb = new HtmlWeb();
+
             HtmlDocument doc;
             try
             {
-               doc = hw.Load(url);
+                doc = htmlWeb.Load(url);
             }
-            catch (ArgumentException)
+            catch (Exception exception)
             {
-                return false;
+                return;
             }
-            string TempContainerForUrl = null;
 
             try
             {
-                foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//a[@href]"))
+                Parallel.ForEach(doc.DocumentNode.SelectNodes("//a[@href]"), link =>
                 {
                     HtmlAttribute attribute = link.Attributes["href"];
-                    if (!DomainUrls.Contains(domain + attribute.Value) && !DomainUrls.Contains(attribute.Value) && attribute.Value != "#" && attribute.Value != "/")
+
+                    string tempUrl = null; ;
+
+                    if (attribute.Value.Contains("http") && attribute.Value.Contains(innerDomain))
                     {
-                        if (!attribute.Value.Contains("http")) TempContainerForUrl = domain + attribute.Value;
-                        else TempContainerForUrl = attribute.Value;
-                        if (TempContainerForUrl.Contains(innerDomain))
-                            links.Add(TempContainerForUrl);
+                        tempUrl = attribute.Value;
                     }
-                }
-            }
-            catch (NullReferenceException)
-            {
-                return false;
-            }
-            
 
-            foreach (string a in links)
+                    if (!attribute.Value.Contains("http"))
+                    {
+                        tempUrl = domain + attribute.Value;
+                    }
+
+                    if (!links.Contains(tempUrl) && !DomainUrls.Contains(tempUrl) && !tempUrl.Contains("mailto:") && tempUrl.Contains(innerDomain))
+                    {
+                        DomainUrls.Add(tempUrl);
+                        links.Add(tempUrl);
+                    }
+                });
+            }
+            catch (Exception exception)
             {
-                if(!DomainUrls.Contains(a))
-                DomainUrls.Add(a);
+
             }
 
-            foreach (string x in links)
+            foreach (string link in links)
             {
-                GetUrlsHtmlParse(x, domain, DomainUrls);
+                GetUrlsHtmlParse(link, domain, DomainUrls);
             }
-            return true;
         }
 
-        public static double ResponseTime(string url)
+        //public static bool GetUrlsHtmlParse(string url, string domain, List<string> DomainUrls)
+        //{
+        //    int found;
+        //    string innerDomain;
+        //    try
+        //    {
+        //        found = domain.IndexOf(".");
+        //        innerDomain = domain.Substring(8, found - 8);
+
+        //    }
+        //    catch (ArgumentOutOfRangeException)
+        //    {
+        //        return false;
+        //    }
+
+        //    if (innerDomain == null) return false;
+
+        //    string URL;
+
+        //    if (!url.Contains("http"))
+        //    {
+        //        URL = domain + url;
+        //    }
+        //    else URL = url;
+
+        //    HttpWebRequest request;
+
+        //    try
+        //    {
+        //        request = WebRequest.Create(URL) as HttpWebRequest;
+
+        //    }
+        //    catch (WebException)
+        //    {
+        //        return false;
+        //    }
+        //    catch (UriFormatException)
+        //    {
+        //        return false;
+        //    }
+
+
+        //    HttpWebResponse response;
+        //    try
+        //    {
+        //       response = request.GetResponse() as HttpWebResponse;
+
+        //    }
+        //    catch (WebException)
+        //    {
+        //        return false;
+        //    }
+
+        //    List<string> links = new List<string>();
+
+        //    HtmlWeb hw = new HtmlWeb() { AutoDetectEncoding = true };
+        //    HtmlDocument doc;
+        //    try
+        //    {
+        //       doc = hw.Load(url);
+        //    }
+        //    catch (ArgumentException)
+        //    {
+        //        return false;
+        //    }
+
+        //    string TempContainerForUrl = null;
+
+
+        //    try
+        //    {
+        //        Logger.Logger.Default.Write("parsing " + url);
+        //    }
+        //    catch (Exception exception)
+        //    {
+
+        //    }
+
+
+        //    try
+        //    {
+        //        Parallel.ForEach(doc.DocumentNode.SelectNodes("//a[@href]"), link =>
+        //       {
+        //           try
+        //           {
+        //               HtmlAttribute attribute = link.Attributes["href"];
+        //               if (!DomainUrls.Contains(domain + attribute.Value) && !DomainUrls.Contains(attribute.Value) && attribute.Value != "#" && attribute.Value != "/")
+        //               {
+        //                   if (!attribute.Value.Contains("http")) TempContainerForUrl = domain + attribute.Value;
+        //                   else TempContainerForUrl = attribute.Value;
+        //                   if (TempContainerForUrl.Contains(innerDomain) && !TempContainerForUrl.Contains("mailto:") && !links.Contains(TempContainerForUrl) && TempContainerForUrl != null && !DomainUrls.Contains(TempContainerForUrl))
+        //                       links.Add(TempContainerForUrl);
+        //               }
+        //           }
+        //           catch (Exception exception)
+        //           {
+
+        //           }
+        //       });
+        //    }
+        //    catch (Exception exception)
+        //    {
+
+        //    }
+
+        //    foreach (string a in links)
+        //    {
+        //        if (!DomainUrls.Contains(a))
+        //        Logger.Logger.Default.Write("ADDED: " + a + "|");
+        //        DomainUrls.Add(a);
+        //    }
+
+        //    foreach (string x in links)
+        //    {
+        //        GetUrlsHtmlParse(x, domain, DomainUrls);
+        //    }
+        //    return true;
+        //}
+
+        public async static Task<double> ResponseTime(string url)
         {
             HttpWebRequest request;
             try
